@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import auth0 from 'auth0-js';
 import queryString from 'query-string';
 import Cookies from 'js-cookie';
+import jwtDecode from 'jwt-decode';
 
 const { hash, host, search } = window.location;
 const IS_DEV = host.includes('localhost');
@@ -102,32 +103,9 @@ class App extends Component {
       method: 'post',
     };
 
-    fetch('/v1/auth/users', options)
+    fetch('/v1/signup', options)
       .then(r => r.json())
       .then(r => console.log(r));
-    // webAuth.signup(
-    //   {
-    //     connection: 'Username-Password-Authentication',
-    //     email: signUpEmail,
-    //     password: signUpPassword,
-    //     user_metadata: {
-    //       companyName: signUpCompanyName,
-    //     },
-    //     app_metadata: {
-    //       permissions: {
-    //         [signUpCompanyName]: 'admin',
-    //       },
-    //     },
-    //   },
-    //   (error, signupResult) => {
-    //     if (signupResult) {
-    //       this.handleLogin(event, {
-    //         loginEmail: signupResult.email,
-    //         loginPassword: signUpPassword,
-    //       });
-    //     }
-    //   },
-    // );
   };
 
   handleLogin = (event, data) => {
@@ -152,6 +130,21 @@ class App extends Component {
       returnTo: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
     });
   };
+
+  getUser() {
+    const jwt = Cookies.get('idToken');
+    const options = {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'get',
+    };
+
+    fetch('/v1/auth/user', options)
+      .then(r => console.log(r))
+      .then(r => console.log(r));
+  }
 
   render() {
     return (
@@ -207,7 +200,7 @@ class App extends Component {
         <h1>Log out</h1>
         <button onClick={this.handleLogout}>Log out</button>
 
-        <button onClick={this.createConnection}>Create connection</button>
+        <button onClick={this.getUser}>Get User</button>
       </div>
     );
   }
