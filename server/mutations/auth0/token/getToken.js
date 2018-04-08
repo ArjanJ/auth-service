@@ -2,7 +2,7 @@ const axios = require('axios');
 
 const { AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_AUDIENCE } = process.env;
 
-const getAuth0Token = async () => {
+const getToken = async () => {
   try {
     const response = await axios({
       data: JSON.stringify({
@@ -27,4 +27,4 @@ const getAuth0Token = async () => {
   }
 };
 
-module.exports = getAuth0Token;
+module.exports = getToken;

@@ -16,6 +16,7 @@
   "author": "your mom",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/datastore": "^1.4.0",
     "auth0-js": "^9.4.2",
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",

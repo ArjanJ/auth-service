@@ -3,8 +3,9 @@ const jwtDecode = require('jwt-decode');
 const HEADER_KEY = 'Bearer';
 
 /**
+ * parseBearerToken
  * Checks for JWT in req.headers.authorization and if it exists,
- * decodes it and adds it to req.bearerToken.
+ * decodes it and adds it to req.userInfo.
  */
 const parseBearerToken = (req, res, next) => {
   let token = null;
@@ -13,7 +14,7 @@ const parseBearerToken = (req, res, next) => {
     const parts = req.headers.authorization.split(' ');
     if (parts.length === 2 && parts[0] === HEADER_KEY) {
       [, token] = parts;
-      req.bearerToken = jwtDecode(token);
+      req.userInfo = jwtDecode(token);
     }
   }
 

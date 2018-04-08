@@ -6,6 +6,8 @@ const MemoryStore = require('memorystore')(session);
 require('dotenv').config();
 
 const routes = require('./routes/');
+const auth0Token = require('./middleware/auth0Token');
+const parseBearerToken = require('./middleware/parseBearerToken');
 
 const app = express();
 const PORT = process.env.PORT || 7070;
@@ -18,8 +20,9 @@ app.use(
     }),
   }),
 );
-app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '../client/build')));
+app.use(bodyParser.json());
+app.use(auth0Token);
 app.use(routes);
 
 app.listen(PORT, () => {

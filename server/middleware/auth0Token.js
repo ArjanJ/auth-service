@@ -1,9 +1,14 @@
-const getAuth0Token = require('../token/token');
+const { getToken } = require('../mutations/auth0/token/');
+const auth0Client = require('../utils/auth0Client');
 
-const checkToken = async (req, res, next) => {
+const auth0Token = async (req, res, next) => {
   const { session } = req;
+
+  // Check if token has expired or does not exist.
   if (!session.auth0Token || session.auth0TokenExpiresAt < Date.now()) {
-    const token = await getAuth0Token();
+    // Fetch new access token.
+    const token = await getToken();
+
     if (token.access_token) {
       const now = Date.now();
       const expiresIn = now + token.expires_in;
@@ -11,11 +16,13 @@ const checkToken = async (req, res, next) => {
       session.auth0TokenExpiresAt = expiresIn;
       // Cache the token so we don't get new ones uneccessarily.
       session.auth0Token = token.access_token;
-      // Set Bearer token on default headers for auth0 requests.
-      req.auth0Token = token.access_token;
+      // Set header on axios http client.
+      auth0Client.defaults.headers.Authorization = `Bearer ${
+        token.access_token
+      }`;
     }
     next();
   }
 };
 
-module.exports = checkToken;
+module.exports = auth0Token;

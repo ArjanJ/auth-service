@@ -31,8 +31,6 @@ webAuth.parseHash({ hash }, (err, authResult) => {
       window.location.replace(sessionStorage.getItem('continue'));
     }
 
-    console.log(authResult);
-
     webAuth.client.userInfo(authResult.accessToken, (err, user) => {
       // Now you have the user's information
       console.log({ user });
@@ -88,14 +86,9 @@ class App extends Component {
     const { signUpCompanyName, signUpEmail, signUpPassword } = this.state;
     const options = {
       body: JSON.stringify({
-        connection: 'Username-Password-Authentication',
         email: signUpEmail,
+        organization: signUpCompanyName,
         password: signUpPassword,
-        app_metadata: {
-          permissions: {
-            [signUpCompanyName]: 'admin',
-          },
-        },
       }),
       headers: {
         'Content-Type': 'application/json',
@@ -111,17 +104,16 @@ class App extends Component {
   handleLogin = (event, data) => {
     event.preventDefault();
     const { loginEmail, loginPassword } = data || this.state;
-    // webAuth.authorize();
-    webAuth.login(
-      {
-        realm: 'Username-Password-Authentication',
-        email: loginEmail,
-        password: loginPassword,
-      },
-      error => {
-        console.log(error);
-      },
-    );
+    webAuth.authorize();
+    // webAuth.login(
+    //   {
+    //     email: loginEmail,
+    //     password: loginPassword,
+    //   },
+    //   error => {
+    //     console.log(error);
+    //   },
+    // );
   };
 
   handleLogout = event => {
@@ -141,9 +133,20 @@ class App extends Component {
       method: 'get',
     };
 
-    fetch('/v1/auth/user', options)
+    fetch('/v1/user', options)
       .then(r => console.log(r))
       .then(r => console.log(r));
+  }
+
+  testDatastore() {
+    const options = {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+    };
+
+    fetch('/v1/signup/test', options);
   }
 
   render() {
@@ -201,6 +204,7 @@ class App extends Component {
         <button onClick={this.handleLogout}>Log out</button>
 
         <button onClick={this.getUser}>Get User</button>
+        <button onClick={this.testDatastore}>Test datastore</button>
       </div>
     );
   }
