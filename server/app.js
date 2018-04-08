@@ -7,7 +7,6 @@ require('dotenv').config();
 
 const routes = require('./routes/');
 const auth0Token = require('./middleware/auth0Token');
-const parseBearerToken = require('./middleware/parseBearerToken');
 
 const app = express();
 const PORT = process.env.PORT || 7070;

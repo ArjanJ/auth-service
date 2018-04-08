@@ -104,16 +104,16 @@ class App extends Component {
   handleLogin = (event, data) => {
     event.preventDefault();
     const { loginEmail, loginPassword } = data || this.state;
-    webAuth.authorize();
-    // webAuth.login(
-    //   {
-    //     email: loginEmail,
-    //     password: loginPassword,
-    //   },
-    //   error => {
-    //     console.log(error);
-    //   },
-    // );
+    webAuth.login(
+      {
+        email: loginEmail,
+        password: loginPassword,
+        realm: 'Username-Password-Authentication',
+      },
+      error => {
+        console.log(error);
+      },
+    );
   };
 
   handleLogout = event => {
@@ -147,6 +147,20 @@ class App extends Component {
     };
 
     fetch('/v1/signup/test', options);
+  }
+
+  changePassword() {
+    const options = {
+      body: JSON.stringify({
+        email: 'arjan@bygrow.com',
+      }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+    };
+
+    fetch('/v1/user/change-password', options);
   }
 
   render() {
@@ -205,6 +219,7 @@ class App extends Component {
 
         <button onClick={this.getUser}>Get User</button>
         <button onClick={this.testDatastore}>Test datastore</button>
+        <button onClick={this.changePassword}>Change password</button>
       </div>
     );
   }
