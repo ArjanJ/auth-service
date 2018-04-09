@@ -2,29 +2,59 @@ const axios = require('axios');
 
 const { AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_AUDIENCE } = process.env;
 
-const getToken = async () => {
+const URL = 'https://arjan.auth0.com/oauth/token';
+const headers = {
+  'content-type': 'application/json',
+};
+
+const CLIENT_CREDENTIALS = 'client_credentials';
+const PASSWORD = 'password';
+
+// For Auth0 Management API
+const getManagementToken = async () => {
   try {
     const response = await axios({
       data: JSON.stringify({
-        grant_type: 'client_credentials',
+        audience: AUTH0_AUDIENCE,
         client_id: AUTH0_CLIENT_ID,
         client_secret: AUTH0_CLIENT_SECRET,
-        audience: AUTH0_AUDIENCE,
+        grant_type: CLIENT_CREDENTIALS,
       }),
-      headers: {
-        'content-type': 'application/json',
-      },
-      method: 'post',
-      url: 'https://arjan.auth0.com/oauth/token',
+      headers,
+      method: 'POST',
+      url: URL,
     });
 
     return response.data;
-  } catch (e) {
-    if (e.response) {
-      return e.response;
-    }
-    return e;
+  } catch (err) {
+    return err.response.data;
   }
 };
 
-module.exports = getToken;
+// For end user authenticating with username and password.
+const getResourceOwnerToken = async (username = '', password = '') => {
+  try {
+    const response = await axios({
+      data: JSON.stringify({
+        client_id: 'ehZzZv53ikxMJTneNFYQQ3elLW3bprEQ',
+        client_secret:
+          'izdh9Dkzi7BtZgj8koPvMfqBo3AOlsJ_E_quC0rgorKsd9GAYBEz3fCTa2KDghGD',
+        grant_type: PASSWORD,
+        password,
+        username,
+      }),
+      headers,
+      method: 'POST',
+      url: URL,
+    });
+
+    return response.data;
+  } catch (err) {
+    return err.response.data;
+  }
+};
+
+module.exports = {
+  getManagementToken,
+  getResourceOwnerToken,
+};

@@ -7,38 +7,38 @@ import jwtDecode from 'jwt-decode';
 const { hash, host, search } = window.location;
 const IS_DEV = host.includes('localhost');
 
-const webAuth = new auth0.WebAuth({
-  domain: 'arjan.auth0.com',
-  clientID: 'ehZzZv53ikxMJTneNFYQQ3elLW3bprEQ',
-  redirectUri: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
-  responseType: 'token id_token',
-});
+// const webAuth = new auth0.WebAuth({
+//   domain: 'arjan.auth0.com',
+//   clientID: 'ehZzZv53ikxMJTneNFYQQ3elLW3bprEQ',
+//   redirectUri: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
+//   responseType: 'token id_token',
+// });
 
-webAuth.parseHash({ hash }, (err, authResult) => {
-  if (err) {
-    return console.log(err);
-  }
+// webAuth.parseHash({ hash }, (err, authResult) => {
+//   if (err) {
+//     return console.log(err);
+//   }
 
-  if (authResult) {
-    Cookies.set('accessToken', authResult.accessToken, {
-      domain: IS_DEV ? 'localhost' : '.jassal.io',
-    });
-    Cookies.set('idToken', authResult.idToken, {
-      domain: IS_DEV ? 'localhost' : '.jassal.io',
-    });
+//   if (authResult) {
+//     Cookies.set('accessToken', authResult.accessToken, {
+//       domain: IS_DEV ? 'localhost' : '.jassal.io',
+//     });
+//     Cookies.set('idToken', authResult.idToken, {
+//       domain: IS_DEV ? 'localhost' : '.jassal.io',
+//     });
 
-    if (sessionStorage.getItem('continue')) {
-      window.location.replace(sessionStorage.getItem('continue'));
-    }
+//     if (sessionStorage.getItem('continue')) {
+//       window.location.replace(sessionStorage.getItem('continue'));
+//     }
 
-    webAuth.client.userInfo(authResult.accessToken, (err, user) => {
-      // Now you have the user's information
-      console.log({ user });
-    });
-  }
+//     webAuth.client.userInfo(authResult.accessToken, (err, user) => {
+//       // Now you have the user's information
+//       console.log({ user });
+//     });
+//   }
 
-  window.location.hash = '';
-});
+//   window.location.hash = '';
+// });
 
 class App extends Component {
   state = {
@@ -90,13 +90,14 @@ class App extends Component {
         organization: signUpCompanyName,
         password: signUpPassword,
       }),
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/json',
       },
       method: 'post',
     };
 
-    fetch('/v1/signup', options)
+    fetch('/v1/auth/signup', options)
       .then(r => r.json())
       .then(r => console.log(r));
   };
@@ -104,23 +105,28 @@ class App extends Component {
   handleLogin = (event, data) => {
     event.preventDefault();
     const { loginEmail, loginPassword } = data || this.state;
-    webAuth.login(
-      {
-        email: loginEmail,
+    const options = {
+      body: JSON.stringify({
+        username: loginEmail,
         password: loginPassword,
-        realm: 'Username-Password-Authentication',
+      }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
       },
-      error => {
-        console.log(error);
-      },
-    );
+      method: 'post',
+    };
+
+    fetch('/v1/auth/login', options)
+      .then(r => r.json())
+      .then(r => console.log(r));
   };
 
   handleLogout = event => {
     event.preventDefault();
-    webAuth.logout({
-      returnTo: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
-    });
+    // webAuth.logout({
+    //   returnTo: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
+    // });
   };
 
   getUser() {

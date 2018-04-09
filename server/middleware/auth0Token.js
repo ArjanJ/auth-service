@@ -1,4 +1,4 @@
-const { getToken } = require('../mutations/auth0/token/');
+const { getManagementToken } = require('../mutations/auth0/token/');
 const auth0Client = require('../utils/auth0Client');
 
 const auth0Token = async (req, res, next) => {
@@ -7,7 +7,7 @@ const auth0Token = async (req, res, next) => {
   // Check if token has expired or does not exist.
   if (!session.auth0Token || session.auth0TokenExpiresAt < Date.now()) {
     // Fetch new access token.
-    const token = await getToken();
+    const token = await getManagementToken();
 
     if (token.access_token) {
       const now = Date.now();

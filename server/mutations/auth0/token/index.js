@@ -1,5 +1,6 @@
-const getToken = require('./getToken');
+const { getManagementToken, getResourceOwnerToken } = require('./getToken');
 
 module.exports = {
-  getToken,
+  getManagementToken,
+  getResourceOwnerToken,
 };
