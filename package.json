@@ -4,10 +4,11 @@
   "description": "Testing auth0",
   "main": "server/app.js",
   "scripts": {
-    "dev": "NODE_ENV=development node server/app.js",
-    "start": "nodemon server/app.js",
+    "dev": "NODE_ENV=development nodemon server/app.js",
+    "start": "node server/app.js",
     "start:client": "cd client && npm start",
-    "deploy": "gcloud config set project arjan-service-auth && gcloud app deploy",
+    "deploy":
+      "gcloud config set project arjan-service-auth && gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
