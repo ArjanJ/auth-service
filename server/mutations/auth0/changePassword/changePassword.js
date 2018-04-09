@@ -7,7 +7,7 @@ const changePassword = async (email = '', connection = CONNECTION) => {
     const response = await axios.post(
       'https://arjan.auth0.com/dbconnections/change_password',
       {
-        client_id: process.env.AUTH0_CLIENT_ID,
+        client_id: process.env.AUTH0_MANAGEMENT_CLIENT_ID,
         connection,
         email,
       },

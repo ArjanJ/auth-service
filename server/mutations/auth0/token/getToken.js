@@ -1,8 +1,15 @@
 const axios = require('axios');
 
-const { AUTH0_CLIENT_ID, AUTH0_CLIENT_SECRET, AUTH0_AUDIENCE } = process.env;
+const {
+  AUTH0_AUTHENTICATION_URL,
+  AUTH0_AUTHENTICATION_CLIENT_ID,
+  AUTH0_AUTHENTICATION_CLIENT_SECRET,
+  AUTH0_MANAGEMENT_CLIENT_ID,
+  AUTH0_MANAGEMENT_CLIENT_SECRET,
+  AUTH0_MANAGEMENT_AUDIENCE,
+} = process.env;
 
-const URL = 'https://arjan.auth0.com/oauth/token';
+const URL = `${AUTH0_AUTHENTICATION_URL}/oauth/token`;
 const headers = {
   'content-type': 'application/json',
 };
@@ -15,9 +22,9 @@ const getManagementToken = async () => {
   try {
     const response = await axios({
       data: JSON.stringify({
-        audience: AUTH0_AUDIENCE,
-        client_id: AUTH0_CLIENT_ID,
-        client_secret: AUTH0_CLIENT_SECRET,
+        audience: AUTH0_MANAGEMENT_AUDIENCE,
+        client_id: AUTH0_MANAGEMENT_CLIENT_ID,
+        client_secret: AUTH0_MANAGEMENT_CLIENT_SECRET,
         grant_type: CLIENT_CREDENTIALS,
       }),
       headers,
@@ -36,9 +43,8 @@ const getResourceOwnerToken = async (username = '', password = '') => {
   try {
     const response = await axios({
       data: JSON.stringify({
-        client_id: 'ehZzZv53ikxMJTneNFYQQ3elLW3bprEQ',
-        client_secret:
-          'izdh9Dkzi7BtZgj8koPvMfqBo3AOlsJ_E_quC0rgorKsd9GAYBEz3fCTa2KDghGD',
+        client_id: AUTH0_AUTHENTICATION_CLIENT_ID,
+        client_secret: AUTH0_AUTHENTICATION_CLIENT_SECRET,
         grant_type: PASSWORD,
         password,
         username,

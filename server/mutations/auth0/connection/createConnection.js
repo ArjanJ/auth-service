@@ -3,7 +3,7 @@ const auth0Client = require('../../../utils/auth0Client');
 const createConnection = async (name = '') => {
   try {
     const createConnectionBody = {
-      enabled_clients: [process.env.AUTH0_CLIENT_ID],
+      enabled_clients: [process.env.AUTH0_MANAGEMENT_CLIENT_ID],
       name,
       strategy: 'auth0',
     };
