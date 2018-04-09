@@ -16,6 +16,7 @@ authRouter.post('/signup', async (req, res) => {
   // Query to see if this organization already has an owner, i.e it exists.
   const allUsersQuery = `app_metadata.${organization}.role:"OWNER"`;
   const organizationOwner = await getAllUsers(allUsersQuery);
+  console.log('1');
   const organizationExists =
     Array.isArray(organizationOwner) && organizationOwner.length > 0;
 
@@ -37,6 +38,8 @@ authRouter.post('/signup', async (req, res) => {
 
   // Create a new user with the role of OWNER under this new connection.
   const user = await createUser(userBody);
+
+  console.log('2');
 
   if (user) {
     // Now we authenticate the user who is the resource owner.

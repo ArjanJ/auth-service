@@ -31,7 +31,6 @@ const getManagementToken = async () => {
       method: 'POST',
       url: URL,
     });
-
     return response.data;
   } catch (err) {
     return err.response.data;

@@ -7,8 +7,7 @@
     "dev": "NODE_ENV=development nodemon server/app.js",
     "start": "node server/app.js",
     "start:client": "cd client && npm start",
-    "deploy":
-      "gcloud config set project arjan-service-auth && gcloud app deploy",
+    "deploy": "gcloud config set project arjan-service-auth && gcloud app deploy",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "engines": {
@@ -27,6 +26,7 @@
     "express-session": "^1.15.6",
     "jwt-decode": "^2.2.0",
     "memorystore": "^1.6.0",
+    "morgan": "^1.9.0",
     "passport": "^0.4.0",
     "passport-auth0": "^0.6.1",
     "request": "^2.85.0"
