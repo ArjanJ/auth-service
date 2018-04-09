@@ -10,7 +10,7 @@ const auth0Token = require('./auth0Token');
 const middleware = express.Router();
 
 const httpLogger = morgan('combined');
-middleware.unsubscribe(httpLogger);
+middleware.use(httpLogger);
 middleware.use(
   session({
     secret: 'dank',
