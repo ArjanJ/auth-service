@@ -173,7 +173,7 @@ class App extends Component {
     const jwt = Cookies.get('idToken');
     const options = {
       body: JSON.stringify({
-        email: 'arjan.1234@bygrow.com',
+        email: 'arjan.00c@bygrow.com',
       }),
       headers: {
         Authorization: `Bearer ${jwt}`,
