@@ -5,7 +5,7 @@ const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const morgan = require('morgan');
 
-const auth0Token = require('./auth0Token');
+const setNamespace = require('./setNamespace');
 
 const middleware = express.Router();
 
@@ -19,8 +19,8 @@ middleware.use(
     }),
   }),
 );
+middleware.use(setNamespace);
 middleware.use(express.static(path.join(__dirname, '../../client/build')));
 middleware.use(bodyParser.json());
-middleware.use(auth0Token);
 
 module.exports = middleware;

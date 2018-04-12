@@ -124,6 +124,20 @@ class App extends Component {
 
   handleLogout = event => {
     event.preventDefault();
+    const jwt = Cookies.get('idToken');
+    const options = {
+      body: JSON.stringify({
+        token: jwt,
+      }),
+      credentials: 'include',
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+    };
+
+    fetch('/v1/auth/logout', options);
     // webAuth.logout({
     //   returnTo: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
     // });
@@ -153,6 +167,22 @@ class App extends Component {
     };
 
     fetch('/v1/signup/test', options);
+  }
+
+  inviteUser() {
+    const jwt = Cookies.get('idToken');
+    const options = {
+      body: JSON.stringify({
+        email: 'arjan.1234@bygrow.com',
+      }),
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+    };
+
+    fetch('/v1/user/invite', options);
   }
 
   changePassword() {
@@ -226,6 +256,7 @@ class App extends Component {
         <button onClick={this.getUser}>Get User</button>
         <button onClick={this.testDatastore}>Test datastore</button>
         <button onClick={this.changePassword}>Change password</button>
+        <button onClick={this.inviteUser}>invite user</button>
       </div>
     );
   }
