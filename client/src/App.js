@@ -9,6 +9,7 @@ const IS_DEV = host.includes('localhost');
 
 class App extends Component {
   state = {
+    newPassword: '',
     inviteEmail: '',
     loginEmail: '',
     loginPassword: '',
@@ -198,6 +199,18 @@ class App extends Component {
             value={this.state.inviteEmail}
           />
           <button type="submit">Invite</button>
+        </form>
+        <h1>Create password</h1>
+        <form onSubmit={this.createPassword}>
+          <label htmlFor="newPassword">New password</label>
+          <input
+            id="newPassword"
+            name="newPassword"
+            onChange={this.handleChange}
+            type="password"
+            value={this.state.newPassword}
+          />
+          <button type="submit">Create password</button>
         </form>
         <h1>Log out</h1>
         <button onClick={this.handleLogout}>Log out</button>

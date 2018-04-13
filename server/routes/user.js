@@ -64,7 +64,6 @@ userRouter.post('/invite', [setAuth0ManagementToken], async (req, res) => {
     connection: 'email',
     email: req.body.email,
     verify_email: false,
-    email_verified: true,
   };
 
   const invitedUser = await createUser(userBody);
@@ -76,8 +75,10 @@ userRouter.post('/invite', [setAuth0ManagementToken], async (req, res) => {
       .end();
   }
 
-  const html = `<p>Click <a href="http://localhost:3000/password#id=${
+  const html = `<p>Click <a href="http://localhost:3000/password?id=${
     invitedUser.user_id
+  }&email=${invitedUser.email}&org=${
+    req.namespace
   }" target="_blank">here</a> to set your password.</p>`;
   const emailData = mailOptions(invitedUser.email, html);
 
