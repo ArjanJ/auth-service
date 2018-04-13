@@ -7,41 +7,9 @@ import jwtDecode from 'jwt-decode';
 const { hash, host, search } = window.location;
 const IS_DEV = host.includes('localhost');
 
-// const webAuth = new auth0.WebAuth({
-//   domain: 'arjan.auth0.com',
-//   clientID: 'ehZzZv53ikxMJTneNFYQQ3elLW3bprEQ',
-//   redirectUri: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
-//   responseType: 'token id_token',
-// });
-
-// webAuth.parseHash({ hash }, (err, authResult) => {
-//   if (err) {
-//     return console.log(err);
-//   }
-
-//   if (authResult) {
-//     Cookies.set('accessToken', authResult.accessToken, {
-//       domain: IS_DEV ? 'localhost' : '.jassal.io',
-//     });
-//     Cookies.set('idToken', authResult.idToken, {
-//       domain: IS_DEV ? 'localhost' : '.jassal.io',
-//     });
-
-//     if (sessionStorage.getItem('continue')) {
-//       window.location.replace(sessionStorage.getItem('continue'));
-//     }
-
-//     webAuth.client.userInfo(authResult.accessToken, (err, user) => {
-//       // Now you have the user's information
-//       console.log({ user });
-//     });
-//   }
-
-//   window.location.hash = '';
-// });
-
 class App extends Component {
   state = {
+    inviteEmail: '',
     loginEmail: '',
     loginPassword: '',
     signUpCompanyName: '',
@@ -117,9 +85,7 @@ class App extends Component {
       method: 'post',
     };
 
-    fetch('/v1/auth/login', options)
-      .then(r => r.json())
-      .then(r => console.log(r));
+    fetch('/v1/auth/login', options);
   };
 
   handleLogout = event => {
@@ -138,9 +104,6 @@ class App extends Component {
     };
 
     fetch('/v1/auth/logout', options);
-    // webAuth.logout({
-    //   returnTo: IS_DEV ? 'http://localhost:3000' : 'https://accounts.jassal.io',
-    // });
   };
 
   getUser() {
@@ -153,27 +116,15 @@ class App extends Component {
       method: 'get',
     };
 
-    fetch('/v1/user', options)
-      .then(r => console.log(r))
-      .then(r => console.log(r));
+    fetch('/v1/user', options);
   }
 
-  testDatastore() {
-    const options = {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'post',
-    };
-
-    fetch('/v1/signup/test', options);
-  }
-
-  inviteUser() {
+  handleInvite = event => {
+    event.preventDefault();
     const jwt = Cookies.get('idToken');
     const options = {
       body: JSON.stringify({
-        email: 'arjan.00c@bygrow.com',
+        email: this.state.inviteEmail,
       }),
       headers: {
         Authorization: `Bearer ${jwt}`,
@@ -183,21 +134,7 @@ class App extends Component {
     };
 
     fetch('/v1/user/invite', options);
-  }
-
-  changePassword() {
-    const options = {
-      body: JSON.stringify({
-        email: 'arjan@bygrow.com',
-      }),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'post',
-    };
-
-    fetch('/v1/user/change-password', options);
-  }
+  };
 
   render() {
     return (
@@ -250,13 +187,24 @@ class App extends Component {
           />
           <button type="submit">Login</button>
         </form>
+        <h1>Invite User</h1>
+        <form onSubmit={this.handleInvite}>
+          <label htmlFor="inviteEmail">Email</label>
+          <input
+            id="inviteEmail"
+            name="inviteEmail"
+            onChange={this.handleChange}
+            type="email"
+            value={this.state.inviteEmail}
+          />
+          <button type="submit">Invite</button>
+        </form>
         <h1>Log out</h1>
         <button onClick={this.handleLogout}>Log out</button>
 
         <button onClick={this.getUser}>Get User</button>
         <button onClick={this.testDatastore}>Test datastore</button>
         <button onClick={this.changePassword}>Change password</button>
-        <button onClick={this.inviteUser}>invite user</button>
       </div>
     );
   }

@@ -2,7 +2,6 @@ const { Router } = require('express');
 
 const setAuth0ResourceOwnerToken = require('../middleware/setAuth0ResourceOwnerToken');
 const setAuth0ManagementToken = require('../middleware/setAuth0ManagementToken');
-const parseBearerToken = require('../middleware/parseBearerToken');
 const { createUser, getAllUsers } = require('../mutations/auth0/user/');
 const { changePassword } = require('../mutations/auth0/changePassword/');
 const {
@@ -13,8 +12,6 @@ const { screamingSnakeCase } = require('../utils/stringUtils');
 const authRouter = Router();
 
 const ROLE_OWNER = 'OWNER';
-const ROLE_EDITOR = 'EDITOR';
-const CONNECTION_EMAIL = 'email';
 const CONNECTION_DATABASE = 'Username-Password-Authentication';
 
 authRouter.post(
@@ -64,10 +61,6 @@ authRouter.post(
 );
 
 authRouter.post('/login', setAuth0ResourceOwnerToken);
-
-authRouter.post('/logout', async (req, res) => {
-  // Not sure how to handle logout from server, yet.
-});
 
 authRouter.post('/passwordless', setAuth0ManagementToken, async (req, res) => {
   const r = await createEmailVerificationTicket(
