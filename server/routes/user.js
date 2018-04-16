@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const nodemailer = require('nodemailer');
-const encodeurl = require('encodeurl');
 
 const setAuth0ManagementToken = require('../middleware/setAuth0ManagementToken');
 const parseBearerToken = require('../middleware/parseBearerToken');
@@ -43,6 +42,18 @@ userRouter.get(
   },
 );
 
+userRouter.get(
+  '/all',
+  [setAuth0ManagementToken, parseBearerToken],
+  async (req, res) => {
+    const allUsersQuery = `app_metadata.${req.namespace}`;
+    const users = await getAllUsers(allUsersQuery);
+
+    console.log(allUsersQuery, users);
+    return res.status(200).send('ok');
+  },
+);
+
 userRouter.post('/invite', [setAuth0ManagementToken], async (req, res) => {
   const userQuery = encodeURIComponent(`email:"${req.body.email}"`);
   const users = await getAllUsers(userQuery);
@@ -75,11 +86,11 @@ userRouter.post('/invite', [setAuth0ManagementToken], async (req, res) => {
       .end();
   }
 
-  const html = `<p>Click <a href="http://localhost:3000/password?id=${
+  const html = `<div><h1>Welcome</h1><p>Click <a href="http://localhost:3000/password?id=${
     invitedUser.user_id
-  }&email=${invitedUser.email}&org=${
+  }&email=${encodeURIComponent(invitedUser.email)}&org=${
     req.namespace
-  }" target="_blank">here</a> to set your password.</p>`;
+  }" target="_blank">here</a> to set your password.</p></div>`;
   const emailData = mailOptions(invitedUser.email, html);
 
   transporter.sendMail(emailData, (err, info) => {

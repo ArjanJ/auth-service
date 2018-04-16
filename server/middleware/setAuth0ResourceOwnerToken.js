@@ -16,12 +16,12 @@ const setAuth0ResourceOwnerToken = async (req, res, next) => {
   }
 
   if (token.id_token) {
-    const { id_token, expires_in } = token;
+    const { id_token: idToken, expires_in: expiresIn } = token;
     const domain = IS_DEV ? 'localhost' : '.jassal.io';
     // Convert seconds to milliseconds.
-    const maxAge = expires_in * 1000;
+    const maxAge = expiresIn * 1000;
     const secure = !IS_DEV;
-    res.cookie('idToken', id_token, { domain, maxAge, secure });
+    res.cookie('idToken', idToken, { domain, maxAge, secure });
     res.status(200).send({ data: null, error: null });
   } else {
     return res.status(401).send({ data: null, error: {} });

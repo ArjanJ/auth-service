@@ -1,95 +1,37 @@
 import React, { Component } from 'react';
-import auth0 from 'auth0-js';
 import queryString from 'query-string';
 import Cookies from 'js-cookie';
-import jwtDecode from 'jwt-decode';
 
-const { hash, host, search } = window.location;
-const IS_DEV = host.includes('localhost');
+const { search } = window.location;
 
 class App extends Component {
-  state = {
-    newPassword: '',
-    inviteEmail: '',
-    loginEmail: '',
-    loginPassword: '',
-    signUpCompanyName: '',
-    signUpEmail: '',
-    signUpPassword: '',
-  };
+  static getUser() {
+    const jwt = Cookies.get('idToken');
+    const options = {
+      headers: {
+        Authorization: `Bearer ${jwt}`,
+        'Content-Type': 'application/json',
+      },
+      method: 'get',
+    };
 
-  componentDidMount() {
-    const parsedSearch = queryString.parse(search);
-    if (parsedSearch.continue) {
-      sessionStorage.setItem('continue', parsedSearch.continue);
-    }
+    fetch('/v1/user', options);
   }
 
-  createConnection = () => {
+  static getUsersInNamespace() {
+    const jwt = Cookies.get('idToken');
     const options = {
-      body: JSON.stringify({
-        name: 'test-connection-lmao',
-        strategy: 'auth0',
-      }),
       headers: {
+        Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
       },
-      method: 'POST',
+      method: 'get',
     };
 
-    fetch('/v1/auth/connections', options)
-      .then(r => r.json())
-      .then(r => console.log(r));
-  };
+    fetch('/v1/user/all', options);
+  }
 
-  handleChange = event => {
-    event.preventDefault();
-    const { name, value } = event.target;
-    this.setState({
-      [name]: value,
-    });
-  };
-
-  handleSignup = event => {
-    event.preventDefault();
-    const { signUpCompanyName, signUpEmail, signUpPassword } = this.state;
-    const options = {
-      body: JSON.stringify({
-        email: signUpEmail,
-        organization: signUpCompanyName,
-        password: signUpPassword,
-      }),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'post',
-    };
-
-    fetch('/v1/auth/signup', options)
-      .then(r => r.json())
-      .then(r => console.log(r));
-  };
-
-  handleLogin = (event, data) => {
-    event.preventDefault();
-    const { loginEmail, loginPassword } = data || this.state;
-    const options = {
-      body: JSON.stringify({
-        username: loginEmail,
-        password: loginPassword,
-      }),
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'post',
-    };
-
-    fetch('/v1/auth/login', options);
-  };
-
-  handleLogout = event => {
+  static handleLogout(event) {
     event.preventDefault();
     const jwt = Cookies.get('idToken');
     const options = {
@@ -105,22 +47,118 @@ class App extends Component {
     };
 
     fetch('/v1/auth/logout', options);
-  };
+  }
 
-  getUser() {
+  static handleLinkAccount(secondaryUserId = '') {
     const jwt = Cookies.get('idToken');
     const options = {
+      body: JSON.stringify({
+        secondaryUserId,
+      }),
       headers: {
         Authorization: `Bearer ${jwt}`,
         'Content-Type': 'application/json',
       },
-      method: 'get',
+      method: 'post',
     };
 
-    fetch('/v1/user', options);
+    fetch('/v1/user/link-account', options);
   }
 
-  handleInvite = event => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      inviteEmail: '',
+      loginEmail: '',
+      loginPassword: '',
+      newPassword: '',
+      signUpCompanyName: '',
+      signUpEmail: '',
+      signUpPassword: '',
+    };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleCreatePassword = this.handleCreatePassword.bind(this);
+    this.handleInvite = this.handleInvite.bind(this);
+    this.handleLogin = this.handleLogin.bind(this);
+    this.handleSignup = this.handleSignup.bind(this);
+  }
+
+  componentDidMount() {
+    const parsedSearch = queryString.parse(search);
+    if (parsedSearch.continue) {
+      sessionStorage.setItem('continue', parsedSearch.continue);
+    }
+  }
+
+  handleChange(event) {
+    event.preventDefault();
+    const { name, value } = event.target;
+    this.setState({
+      [name]: value,
+    });
+  }
+
+  handleSignup(event) {
+    event.preventDefault();
+    const { signUpCompanyName, signUpEmail, signUpPassword } = this.state;
+    const options = {
+      body: JSON.stringify({
+        email: signUpEmail,
+        organization: signUpCompanyName,
+        password: signUpPassword,
+      }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+    };
+
+    fetch('/v1/auth/signup', options);
+  }
+
+  handleLogin(event) {
+    event.preventDefault();
+    const { loginEmail, loginPassword } = this.state;
+    const options = {
+      body: JSON.stringify({
+        username: loginEmail,
+        password: loginPassword,
+      }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+    };
+
+    fetch('/v1/auth/login', options);
+  }
+
+  async handleCreatePassword(event) {
+    event.preventDefault();
+    const query = queryString.parse(window.location.search);
+    const { email = '', id = '', org = '' } = query;
+    const options = {
+      body: JSON.stringify({
+        email,
+        invited: true,
+        organization: org,
+        password: this.state.newPassword,
+      }),
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'post',
+    };
+
+    fetch('/v1/auth/signup', options)
+      .then(r => r.json())
+      .then(() => App.handleLinkAccount(id));
+  }
+
+  handleInvite(event) {
     event.preventDefault();
     const jwt = Cookies.get('idToken');
     const options = {
@@ -135,7 +173,7 @@ class App extends Component {
     };
 
     fetch('/v1/user/invite', options);
-  };
+  }
 
   render() {
     return (
@@ -201,7 +239,7 @@ class App extends Component {
           <button type="submit">Invite</button>
         </form>
         <h1>Create password</h1>
-        <form onSubmit={this.createPassword}>
+        <form onSubmit={this.handleCreatePassword}>
           <label htmlFor="newPassword">New password</label>
           <input
             id="newPassword"
@@ -212,12 +250,15 @@ class App extends Component {
           />
           <button type="submit">Create password</button>
         </form>
-        <h1>Log out</h1>
+        <h1>Other actions</h1>
         <button onClick={this.handleLogout}>Log out</button>
 
-        <button onClick={this.getUser}>Get User</button>
-        <button onClick={this.testDatastore}>Test datastore</button>
+        <button onClick={App.getUser}>Get User</button>
         <button onClick={this.changePassword}>Change password</button>
+        <button onClick={this.linkAccount}>Link account</button>
+        <button onClick={App.getUsersInNamespace}>
+          Get users in namespace
+        </button>
       </div>
     );
   }

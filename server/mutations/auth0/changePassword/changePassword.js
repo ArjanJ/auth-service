@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const CONNECTION = 'Username-Password-Authentication';
+const CONNECTION = 'jassal-platform';
 
 const changePassword = async (email = '', connection = CONNECTION) => {
   try {

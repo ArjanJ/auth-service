@@ -4,34 +4,38 @@ const setAuth0ResourceOwnerToken = require('../middleware/setAuth0ResourceOwnerT
 const setAuth0ManagementToken = require('../middleware/setAuth0ManagementToken');
 const { createUser, getAllUsers } = require('../mutations/auth0/user/');
 const { changePassword } = require('../mutations/auth0/changePassword/');
-const {
-  createEmailVerificationTicket,
-} = require('../mutations/auth0/tickets/');
 const { screamingSnakeCase } = require('../utils/stringUtils');
 
 const authRouter = Router();
 
+const ROLE_EDITOR = 'EDITOR';
 const ROLE_OWNER = 'OWNER';
-const CONNECTION_DATABASE = 'Username-Password-Authentication';
+const CONNECTION_DATABASE = 'jassal-platform';
 
 authRouter.post(
   '/signup',
   setAuth0ManagementToken,
   async (req, res, next) => {
+    const role = req.body.invited ? ROLE_EDITOR : ROLE_OWNER;
+
     // Parse organization, "Red Truck" -> "RED_TRUCK".
     const organization = screamingSnakeCase(req.body.organization);
-    // Query to see if this organization already has an owner, i.e it exists.
-    const allUsersQuery = `app_metadata.${organization}.role:"OWNER"`;
-    const organizationOwner = await getAllUsers(allUsersQuery);
-    const organizationExists =
-      Array.isArray(organizationOwner) && organizationOwner.length > 0;
 
-    if (organizationExists) {
-      return res.status(200).send({ data: null, error: 'ORGANIZATION_EXISTS' });
+    if (role === ROLE_OWNER) {
+      // Query to see if this organization already has an owner, i.e it exists.
+      const allUsersQuery = `app_metadata.${organization}.role:"OWNER"`;
+      const organizationOwner = await getAllUsers(allUsersQuery);
+      const organizationExists =
+        Array.isArray(organizationOwner) && organizationOwner.length > 0;
+
+      if (organizationExists) {
+        return res
+          .status(200)
+          .send({ data: null, error: 'ORGANIZATION_EXISTS' });
+      }
     }
 
     const connection = CONNECTION_DATABASE;
-    const role = ROLE_OWNER;
 
     // Create new User with OWNER role under new organization.
     const userBody = {
@@ -49,10 +53,7 @@ authRouter.post(
     const user = await createUser(userBody);
 
     if (user.error) {
-      res
-        .status(user.statusCode)
-        .send({ data: null, error: user })
-        .end();
+      return res.status(user.statusCode).send({ data: null, error: user });
     }
 
     return next();
@@ -61,12 +62,6 @@ authRouter.post(
 );
 
 authRouter.post('/login', setAuth0ResourceOwnerToken);
-
-authRouter.post('/passwordless', setAuth0ManagementToken, async (req, res) => {
-  const r = await createEmailVerificationTicket(
-    'http://localhost:3000/testing',
-  );
-});
 
 authRouter.post(
   '/change-password',

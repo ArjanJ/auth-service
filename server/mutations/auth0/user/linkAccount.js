@@ -1,10 +1,11 @@
 const auth0Client = require('../../../utils/auth0Client');
 
 const linkAccount = async (userId = '', userIdToBeLinked = '') => {
+  const provider = userIdToBeLinked.split('|')[0];
   try {
     const secondaryAccount = {
       user_id: userIdToBeLinked,
-      provider: 'auth0',
+      provider,
     };
     const response = await auth0Client.post(
       `/users/${userId}/identities`,
