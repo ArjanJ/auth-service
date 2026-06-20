@@ -16,7 +16,7 @@
   "author": "your mom",
   "license": "ISC",
   "dependencies": {
-    "@google-cloud/datastore": "^1.4.0",
+    "@google-cloud/datastore": "^10.1.1",
     "auth0-js": "^9.32.0",
     "axios": "^0.18.0",
     "body-parser": "^1.18.2",
@@ -31,7 +31,8 @@
     "passport": "^0.4.0",
     "passport-auth0": "^0.6.1",
     "query-string": "^6.0.0",
-    "request": "^2.85.0"
+    "react-scripts": "^5.0.1",
+    "request": "^2.88.2"
   },
   "devDependencies": {
     "eslint": "^4.19.1",

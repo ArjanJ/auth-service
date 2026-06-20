@@ -8,14 +8,16 @@
     "eslint-plugin-import": "^2.10.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
-    "react-scripts": "1.1.1"
+    "react-scripts": "^5.0.1"
   },
   "dependencies": {
+    "@google-cloud/datastore": "^10.1.1",
     "eslint-config-prettier": "^2.9.0",
     "js-cookie": "^2.2.0",
     "query-string": "^5.1.1",
     "react": "^16.3.0",
-    "react-dom": "^16.3.0"
+    "react-dom": "^16.3.0",
+    "request": "^2.88.2"
   },
   "scripts": {
     "start": "react-scripts start",
