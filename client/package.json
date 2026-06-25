@@ -29,5 +29,8 @@
     "/v1": {
       "target": "http://localhost:8080"
     }
+  },
+  "overrides": {
+    "form-data": "2.5.6"
   }
 }
