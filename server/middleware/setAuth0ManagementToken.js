@@ -20,7 +20,7 @@ const setAuth0ManagementToken = async (req, res, next) => {
       // Cache the token so we don't get new ones uneccessarily.
       session.auth0ManagementToken = token.access_token;
       // Set header on axios http client.
-      auth0Client.defaults.headers.Authorization = `Bearer ${
+      auth0Client.defaults.headers.common.Authorization = `Bearer ${
         token.access_token
       }`;
     }
