@@ -44,7 +44,8 @@
   },
   "overrides": {
     "kind-of": "6.0.3",
-    "js-yaml": "3.15.0",
+    "js-yaml@<4": "3.15.1",
+    "js-yaml@>=4": "4.3.1",
     "tmp": "0.2.7",
     "minimist": "1.2.6",
     "json-schema": "0.4.0",
