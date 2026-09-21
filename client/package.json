@@ -20,7 +20,7 @@
     "js-cookie": "^3.0.7",
     "query-string": "^5.1.1",
     "react": "^16.3.0",
-    "react-dom": "^16.3.0",
+    "react-dom": "16.3.3",
     "request": "^2.88.2"
   },
   "scripts": {
@@ -44,11 +44,29 @@
     },
     "underscore": "1.13.8",
     "@svgr/plugin-svgo": "6.5.1",
+    "@tootallnate/once": "2.0.1",
+    "body-parser": "1.20.6",
+    "nanoid": "3.3.18",
+    "postcss": "8.5.23",
+    "qs": "6.16.0",
+    "resolve-url-loader": "5.0.0",
     "css-minimizer-webpack-plugin": {
       "serialize-javascript": "7.0.5"
     },
     "rollup-plugin-terser": {
       "serialize-javascript": "7.0.5"
     }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
